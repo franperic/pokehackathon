@@ -132,3 +132,5 @@ dmypy.json
 *.csv
 *.pdf
 *.DS_Store
+# ignore vscode settings
+.vscode 
