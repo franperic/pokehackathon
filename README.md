@@ -1,7 +1,9 @@
 # PokéHackathon
 
 **Team**: Aroma
+
 **Duration**: Mid May - End of May 2020
+
 **Status**: In Process
 
 ### Objective
