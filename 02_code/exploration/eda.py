@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 import plotly.graph_objects as go
-
+import ppscore as pps
+import seaborn as sns
 
 # Data import
 files = sorted(glob.glob("01_data/raw/*"))
@@ -50,6 +51,21 @@ fig = go.Figure(data=go.Heatmap(
 
 fig.update_layout(
     title='Mean Battle Results',
+    xaxis_nticks=50)
+
+fig.show()
+
+# Predictive Power Score
+pps_matrix = pps.matrix(battle, sample=5000)
+
+fig = go.Figure(data=go.Heatmap(
+        z=pps_matrix.values,
+        x=pps_matrix.index,
+        y=pps_matrix.columns,
+        colorscale='Viridis'))
+
+fig.update_layout(
+    title='Predictive Power Score',
     xaxis_nticks=50)
 
 fig.show()
