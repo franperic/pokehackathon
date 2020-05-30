@@ -78,3 +78,9 @@ preprocessed_available_pokemons:
 preprocessed_battle_results:
     type: pandas.CSVDataSet
     filepath: data/02_intermediate/preprocessed_battle_results.csv
+    
+    
+#Creating battle_results with types, hashes, AD and weaknesses/effectiveness
+battle_results_with_weakness:
+    type: pandas.CSVDataSet
+    filepath: data/03_primary/battle_results_with_weakness.csv
