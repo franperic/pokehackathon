@@ -84,3 +84,8 @@ preprocessed_battle_results:
 battle_results_with_weakness:
     type: pandas.CSVDataSet
     filepath: data/03_primary/battle_results_with_weakness.csv
+    
+#Creating battle_results with differences and ratios
+battle_results_diff_ratio:
+    type: pandas.CSVDataSet
+    filepath: data/03_primary/battle_results_diff_ratio.csv
