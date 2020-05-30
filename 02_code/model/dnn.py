@@ -21,25 +21,24 @@ import matplotlib.pyplot as plt
 
 
 
-battles = pd.read_csv("01_data/raw/Battle_Results.csv", sep="|")
+battles_raw = pd.read_csv("01_data/processed/battle_results_diff_ratio.csv", sep=",")
+battles = battles_raw.copy()
 
 # Prep
-cat_vars = battles.select_dtypes(object).columns.values.tolist()
+columns = battles.columns.tolist()
 battles = battles.astype({"Legendary_1": int, "Legendary_2": int})
 
-h1 = FeatureHasher(n_features=5, input_type='string')
-h2 = FeatureHasher(n_features=5, input_type='string')
-d1 = h1.fit_transform(battles["Name_1"])
-d2 = h2.fit_transform(battles["Name_2"])
 
-d1 = pd.DataFrame(data=d1.toarray())
-d1.columns = ["Name_1_" + str(x) for x in range(5)]
-d2 = pd.DataFrame(data=d2.toarray())
-d2.columns = ["Name_2_" + str(x) for x in range(5)]
 
-battles = battles.drop(columns=cat_vars[0:2])
-battles = pd.concat([battles, d1, d2], axis=1)
-battles = pd.get_dummies(battles)
+battles = pd.get_dummies(battles, columns=["WeatherAndTime"])
+
+neglect = ["WeatherAndTime_a", "WeatherAndTime_b", 
+           "WeatherAndTime_c", "WeatherAndTime_d", "WeatherAndTime_e",
+           "Name_1", "Name_2", "Type_1_1", "Type_1_2", "Type_2_1", "Type_2_2",
+           "ID_1", "ID_2"]
+
+battles = battles.drop(columns=neglect)
+
 
 model_df = battles.copy()
 
@@ -54,16 +53,23 @@ sns.pairplot(illust[["BattleResult", "Level_1", "Level_2"]])
 plt.show()
 
 train_stats = X_train.describe().transpose()
+target_stats = y_train.describe()
 
 def norm(x):
     return (x - train_stats["mean"])/train_stats["std"]
 
+def target_norm(x):
+    return (x - target_stats["mean"])/target_stats["std"]
+
 norm_X_train = norm(X_train)
 norm_X_test = norm(X_test)
+norm_y_train = target_norm(y_train)
+norm_y_test = target_norm(y_test)
 
 def build_model():
     model = keras.Sequential([
     layers.Dense(64, activation='relu', input_shape=[len(X_train.keys())]),
+    layers.Dense(64, activation='relu'),
     layers.Dense(64, activation='relu'),
     layers.Dense(1)
     ])
@@ -81,7 +87,7 @@ model.summary()
 early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 
 epochs = 1000
-early_history = model.fit(norm_X_train, y_train, 
+early_history = model.fit(norm_X_train, norm_y_train, 
                     epochs=epochs, validation_split = 0.2, verbose=0, 
                     callbacks=[early_stop, tfdocs.modeling.EpochDots()])
 
@@ -95,9 +101,10 @@ plt.ylabel('MSE [BattleResults]')
 plt.show()
 
 
-loss, mae, mse = model.evaluate(norm_X_test, y_test, verbose=2)
+loss, mae, mse = model.evaluate(norm_X_test, norm_y_test, verbose=2)
 
 test_predictions = model.predict(norm_X_test).flatten()
+test_predictions = test_predictions * target_stats["std"] - target_stats["mean"]
 
 a = plt.axes(aspect='equal')
 plt.scatter(y_test, test_predictions)
@@ -114,3 +121,28 @@ plt.hist(error, bins = 25)
 plt.xlabel("Prediction Error [MPG]")
 _ = plt.ylabel("Count")
 plt.show()
+
+inspect = np.where(error == error.max())
+
+test_predictions[inspect]
+y_test.loc[inspect]
+norm_X_test.loc[inspect]
+
+def denorm(x):
+    return x * train_stats["std"] + train_stats["mean"]
+
+denorm(norm_X_test.loc[inspect]).loc[:, ["Level_1", "Level_2", "Attack_1", "Attack_2"]]
+
+
+rslt = y_test.loc[inspect].values[0]
+battles.loc[(battles["BattleResult"] == rslt) &
+             (battles["Level_1"] == 63) &
+             (battles["Level_2"] == 29) &
+             (battles["Attack_1"] == 379) &
+             (battles["Attack_2"] == 176)].transpose()
+
+
+model.save("03_model/20200530/")
+check = keras.models.load_model("03_model/20200530")
+check.predict(norm_X_test)
+
