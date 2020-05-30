@@ -230,3 +230,55 @@ def create_battle_results_with_weakness(
     
     
     return battle_results_with_weakness_4 #master_table
+
+def create_battle_results_differences_and_ratios(
+    battle_results: pd.DataFrame) -> pd.DataFrame:
+    """Creates additional features based on the Differences and Ratios of Pokemon1 and Pokemon2.
+
+        Args:
+            battle_results: Battle Results with weakness
+        Returns:
+            battle_results: Battle Results with differences and ratios
+    """
+    
+    battle_results['Level Diff'] = battle_results['Level_1'] - battle_results['Level_2']
+    battle_results['Level Ratio'] = battle_results['Level_1'] / battle_results['Level_2']
+    
+    battle_results['Price Diff'] = battle_results['Price_1'] - battle_results['Price_2']
+    battle_results['Price Ratio'] = battle_results['Price_1'] / battle_results['Price_2']
+    
+    battle_results['HP Diff'] = battle_results['HP_1'] - battle_results['HP_2']
+    battle_results['HP Ratio'] = battle_results['HP_1'] / battle_results['HP_2']
+    
+    battle_results['Attack Diff'] = battle_results['Attack_1'] - battle_results['Attack_2']
+    battle_results['Attack Ratio'] = battle_results['Attack_1'] / battle_results['Attack_2']
+    
+    battle_results['Defense Diff'] = battle_results['Defense_1'] - battle_results['Defense_2']
+    battle_results['Defense Ratio'] = battle_results['Defense_1'] / battle_results['Defense_2']
+    
+    battle_results['Sp_Atk Diff'] = battle_results['Sp_Atk_1'] - battle_results['Sp_Atk_2']
+    battle_results['Sp_Atk Ratio'] = battle_results['Sp_Atk_1'] / battle_results['Sp_Atk_2']
+    
+    battle_results['Sp_Def Diff'] = battle_results['Sp_Def_1'] - battle_results['Sp_Def_2']
+    battle_results['Sp_Def Ratio'] = battle_results['Sp_Def_1'] / battle_results['Sp_Def_2']
+    
+    battle_results['Speed Diff'] = battle_results['Speed_1'] - battle_results['Speed_2']
+    battle_results['Speed Ratio'] = battle_results['Speed_1'] / battle_results['Speed_2']
+    
+    
+    battle_results['A/D Diff'] = battle_results['A1/D2'] - battle_results['A2/D1']
+    battle_results['A/D Ratio'] = battle_results['A1/D2'] / battle_results['A2/D1']
+    
+    battle_results['Sp_A/Sp_D Diff'] = battle_results['Sp_A1/Sp_D2'] - battle_results['Sp_A2/Sp_D1']
+    battle_results['Sp_A/Sp_D Ratio'] = battle_results['Sp_A1/Sp_D2'] / battle_results['Sp_A2/Sp_D1']
+    
+    battle_results['Legendary Diff'] = battle_results['Legendary_1'] - battle_results['Legendary_2']
+    
+    battle_results['Eff_11 Diff'] = battle_results['Eff_11'] - 1/battle_results['Eff_11']
+    battle_results['Eff_12 Diff'] = battle_results['Eff_12'] - 1/battle_results['Eff_12']
+    battle_results['Eff_21 Diff'] = battle_results['Eff_21'] - 1/battle_results['Eff_21']
+    battle_results['Eff_22 Diff'] = battle_results['Eff_22'] - 1/battle_results['Eff_22']
+    
+    battle_results['Eff Diff'] = battle_results['Eff'] - 1/battle_results['Eff']
+                                                                          
+    return battle_results

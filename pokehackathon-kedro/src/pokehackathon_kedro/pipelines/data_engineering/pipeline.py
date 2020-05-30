@@ -5,7 +5,8 @@ from pokehackathon_kedro.pipelines.data_engineering.nodes import (
     create_battle_results_with_types,
     create_battle_results_with_hashed_types,
     create_battle_results_AD,
-    create_battle_results_with_weakness
+    create_battle_results_with_weakness,
+    create_battle_results_differences_and_ratios
 )
 
 def create_pipeline(**kwargs):
@@ -46,6 +47,12 @@ def create_pipeline(**kwargs):
                 inputs=["battle_results_AD","weakness_pokemons"],
                 outputs="battle_results_with_weakness",
                 name="creating_battle_results_with_weakness",
+            ),
+            node(
+                func=create_battle_results_differences_and_ratios,
+                inputs=["battle_results_with_weakness"],
+                outputs="battle_results_diff_ratio",
+                name="creating_battle_results_differences_and_ratios",
             ),
             
         ]
