@@ -18,6 +18,21 @@ def preprocess_available_pokemons(available_pokemons: pd.DataFrame) -> pd.DataFr
     return available_pokemons
 
 
+def preprocess_submission(submission: pd.DataFrame) -> pd.DataFrame:
+    """Preprocess the data for submission
+       Set Legendary to integer.
+
+        Args:
+            submission: Source data.
+        Returns:
+            Preprocessed data.
+
+    """
+    submission = submission.astype({"Legendary_2": int})
+
+
+    return submission
+
 def preprocess_battle_results(battle_results: pd.DataFrame) -> pd.DataFrame:
     """Preprocess the data for battle_results.
        Set Legendary to integer.
@@ -72,7 +87,7 @@ def create_battle_results_with_types(
     #Drop 'Name' as it is already saved in 'Name_2'
     battle_results_with_types.drop(["Name"], axis=1, inplace=True)
     
-    battle_results_with_types = battle_results_with_types.fillna('')
+    battle_results_with_types = battle_results_with_types.fillna('0')
     return battle_results_with_types
 
 

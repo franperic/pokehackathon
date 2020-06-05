@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
-import plotly.graph_objects as go
+from plotly import graph_objects as go
 import ppscore as pps
 import seaborn as sns
 
